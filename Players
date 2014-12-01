@@ -1,81 +1,132 @@
+#current bugs:
+# #code not recognizing repeated successful guesses
+# #a repeated hit is incrementing ships hit
+
+
 import os
 
-print ("Let's play Battleship! /n")
+print("Let's play Battleship!")
 
 #Functions
-def init_player(numship):
+#Create players and def row and col for ships in set
+def init_player(player,numship):
     ships = []
-    Name = input("What is your name? /n")
+    #Name = input("What is your name? /n")
     for ship in range(numship):
-        row = int(input("What row do you want to put your ship in? /n"))-1
+        Name = "Player " + str(player)
+        print(Name)
+        while True:
+            try:
+                row = int(input("What row do you want to put your ship in?"))-1
+            except ValueError:
+                print("Invalid input. Enter a number.")
+            else:
+                break
         while (row > 7) or (row < 0):
-            print ("That's not in the ocean! Enter a number 1-8.")
-            row = int(input("What row do you want to put your ship in? /n"))-1
-        col = int(input("What column do you want to put your ship in? /n"))-1
+            print("That's not in the ocean! Enter a number 1-8.")
+            row = int(input("What row do you want to put your ship in?"))-1
+        while True:
+            try:
+                col = int(input("What column do you want to put your ship in?"))-1
+            except ValueError:
+                print("Invalid input. Enter a number.")
+            else:
+                break
         while (col > 7) or (col < 0):
-            print ("That's not in the ocean! Enter a number 1-8.")
-            col = int(input("What column do you want to put your ship in? /n"))-1
-        ships.append([row, col])
+            print("That's not in the ocean! Enter a number 1-8.")
+            col = int(input("What column do you want to put your ship in?"))-1
+        ships.append([[row, col], 0])
     os.system('cls' if os.name == 'nt' else 'clear')
     return [Name, ships]
 
-
+#create board structure
 def make_board():
     for x in range(8):
         board.append(["O"] * 8)
     return board
 
-
+#print board structure
 def print_board(board):
     for row in board:
         print(" ".join(row))
 
-#http://stackoverflow.com/questions/4843158/check-if-a-python-list-item-contains-a-string-inside-another-string
 def attack_ship():
+    global ships_hit
+    global game
     for player in range(len(players)):
-        ships_hit = 0
+        attacked = player + 1
+        if attacked >= len(players):
+            attacked = 0
+        print ("Player", player , "Attacking Player", attacked)
         num_ships = numship
         print ("Okay, " + str((players[player][0])) + ", it's your turn.")
-        guess_row = str(int(input("Guess a row for " + str((players[player+1][0])) + "'s ship:"))-1)
-        guess_col = str(int(input("Guess a column for " + str((players[player+1][0])) + "'s ship:"))-1)
-        if (guess_row in players[player+1][1] for players[player+1][1] in players[player+1]) \
-                and \
-                (guess_col in players[player+1][1] for players[player+1][1] in players[player+1]):
-            print ("You hit one!")
-            print (str(ships_hit + 1) + " down, " + str(num_ships - 1) + " to go!")
-            if ships_hit == numship:
-                print ("You win!")
-        elif (guess_row in players[player+1][1]) or (guess_col in players[player+1][1]):
-            print ("One of those was right!")
+        while True:
+            try:
+                guess_row = int(input("Guess a row for Player " + str(attacked) + "'s ship:"))-1
+            except ValueError:
+                print ("Invalid input. Try again")
+            else:
+                break
+        while (guess_row > 7) or (guess_row < 0):
+            print("That's not in the ocean! Enter a number 1-8.")
+            guess_row = int(input("Guess a row for Player " + str(attacked) + "'s ship:"))-1
+        while True:
+            try:
+                guess_col = int(input("Guess a column for Player " + str(attacked) + "'s ship:"))-1
+            except ValueError:
+                print("Invalid input. Try again")
+            else:
+                break
+        while (guess_col > 7) or (guess_col < 0):
+            print("That's not in the ocean! Enter a number 1-8.")
+            guess_col = int(input("Guess a column for Player " + str(attacked) + "'s ship:"))-1
+        guess_ship = [guess_row, guess_col]
+        for index in range(len(players[attacked][1])):
+            if players[attacked][1][index][0] == guess_ship:
+                players[attacked][1][index][1] += 1
+                ships_hit = sum([boat[1] for boat in players[attacked][1]])
+                print("You hit one!")
+                print(str(ships_hit) + " down, " + str(num_ships - ships_hit) + " to go!")
+            elif players[attacked][1][index][1] == 1:
+                for index in range(len(players[attacked][1])):
+                    if players[attacked][1][index][0] == guess_ship:
+                        players[attacked][1][index][1] += 1
+                        ships_hit = sum([boat[1] for boat in players[attacked][1]])
+                        print("You hit one!")
+                        print(str(ships_hit) + " down, " + str(num_ships - ships_hit) + " to go!")
+                    else:
+                        break
+#                    if [boat[1] for boat in players[attacked][1]] == 0:
+            elif players[attacked][1][index][1] >= 2:
+                    players[attacked][1][index][1] -= 1
+                    ships_hit = sum([boat[1] for boat in players[attacked][1]]) - 1
+                    print(players[attacked][1])
+                    print("You already hit that ship! Better luck next time.")
+        if sum([boat[1] for boat in players[attacked][1]]) == numship:
+            game = False
+            print("You win!")
+            break
 
 
 
 #Initialize
-num_players = int(input("How many people are playing? /n"))
-numship = int(input("How many ships per player? /n"))
+num_players = int(input("How many people are playing?"))
+numship = int(input("How many ships per player?"))
+ships_hit = 0
 players = []
+
 for player in range(num_players):
-    players.append(init_player(numship))
+    players.append(init_player(player, numship))
 
 for player in range(len(players)):
     board = []
     board = make_board()
     players[player].append(board)
-
-#we're going to try to put an X on the board, where the ship is supposed to go.
-
-#for player in range(len(players)):
-#    print (players[player][0])
-#    print (players[player][len(players[player])-1])
-
-
+    players[player].insert(2, ships_hit)
 
 #attack ship
-for player in range(len(players)):
+game = True
+while game == True:
     attack_ship()
-
-
-# print (players[player])
-#(players[player][numship+1])
-#     for ship in range(len(ships)):
-#        board[guess_row][guess_col] = "X"
+    if game == False:
+        break
