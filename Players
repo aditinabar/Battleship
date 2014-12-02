@@ -1,6 +1,8 @@
 #current bugs:
 # #code not recognizing repeated successful guesses
 # #a repeated hit is incrementing ships hit
+# #clean code by 12/5
+# #get someone to check code
 
 
 import os
