@@ -1,8 +1,9 @@
 #current bugs:
-# #code not recognizing repeated successful guesses
-# #a repeated hit is incrementing ships hit
 # #clean code by 12/5
-# #get someone to check code
+# #get someone to check code\
+# #ERRORS
+# #"nice try bud." prints regardless of input
+
 
 
 import os
@@ -89,11 +90,10 @@ def attack_ship():
                     players[attacked][1][index][1] += 1
                     ships_hit = sum([boat[1] for boat in players[attacked][1]])
                     print("You hit one!")
-                    print(str(ships_hit) + " down, " + str(num_ships - ships_hit) + " to go!")
+                    print(str(ships_hit) + " down, " + str(num_ships - ships_hit) + " to go")
                 elif players[attacked][1][index][1] == 1:
                     print("You already hit that ship! Better luck next time.")
-                            #                    if [boat[1] for boat in players[attacked][1]] == 0:
-            else:
+            elif players[attacked][1][index][0] != guess_ship:
                 print("nice try bud.")
         if sum([boat[1] for boat in players[attacked][1]]) == numship:
             game = False
