@@ -1,9 +1,7 @@
 #current bugs:
-# #clean code by 12/5
 # #get someone to check code\
 # #ERRORS
 # #"nice try bud." prints regardless of input
-
 
 
 import os
