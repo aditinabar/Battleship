@@ -2,7 +2,7 @@
 # #get someone to check code\
 # #ERRORS
 # #"nice try bud." prints regardless of input
-# #push code to repo
+# #TEST TEST
 
 
 import os
